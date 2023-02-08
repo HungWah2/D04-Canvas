@@ -1,11 +1,15 @@
 let canvas = document.getElementById('myCanvas')
+/**@type {HTMLVideoElement} */
+let video = document.getElementById('video')
+
 let item = document.querySelector("#moveItem")
 let itemRect = item.getBoundingClientRect()
 let happy = document.querySelector("#happy")
 let cry = document.querySelector("#sad")
 let Heart = document.querySelector("#heart")
 let Pacman = document.querySelector("#pacman")
-
+let cancel = document.querySelector("#cancel")
+let badApple = document.querySelector("#badApple")
 
 document.addEventListener("mousemove", followMouse, 1000/120);
 
@@ -279,11 +283,6 @@ function sad (){
     paper.fill();
 }
 
-// setInterval(function(){
-//     sad()
-    
-// },100/120)
-
 function smile()
 {
     paper.clearRect(0, 0, canvas.width, canvas.height)
@@ -340,21 +339,6 @@ function heart()
     paper.fill();
 }
 
-// setInterval(function(){
-//     pacman(open+=dir)
-//     ghost1()
-//     ghost2()
-//     ghost3()
-//     dots()
-//     //sad()
-//     //heart()
-//     //smile()
-//     if(open%100==0)
-//     dir=-dir
-//     x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
-//     y = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
-// }, 1000/120)
-
 function roundedRect(paper, x, y, width, height, radius) {
     paper.beginPath();
     paper.moveTo(x, y + radius);
@@ -379,34 +363,69 @@ canvas.addEventListener("click", (event) => {
 })
 
 happy.addEventListener("click", ()=> {
-    setInterval(function(){
+    cry.style.display = "none"
+    Pacman.style.display = "none"
+    Heart.style.display = "none"
+    happy.style.display = "none"
+    badApple.style.display = "none"
+    cancel.style.display = "block"
+    let happy2 = setInterval(function(){
     smile()
     x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
     y = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    cancel.addEventListener("click", ()=> {
+        clearInterval(happy2)
+        paper.clearRect(0, 0, canvas.width, canvas.height)
+    })
     },1000/120)
     
 })
 
 cry.addEventListener("click", ()=> {
-    setInterval(function(){
+    happy.style.display = "none"
+    Pacman.style.display = "none"
+    Heart.style.display = "none"
+    cry.style.display = "none"
+    badApple.style.display = "none"
+    cancel.style.display = "block"
+    let sad2 = setInterval(function(){
     sad()
     x = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
     y = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    cancel.addEventListener("click", ()=> {
+        clearInterval(sad2)
+        paper.clearRect(0, 0, canvas.width, canvas.height)
+    })
     },1000/120)
 })
 
 Heart.addEventListener("click", ()=> {
-    setInterval(function(){
+    Pacman.style.display = "none"
+    cry.style.display = "none"
+    happy.style.display = "none"
+    Heart.style.display = "none"
+    badApple.style.display = "none"
+    cancel.style.display = "block"
+    let heart2 = setInterval(function(){
     heart()
     x = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
     y = 200 + (30)*-Math.tan((omega*currentTime+0)/1000);
+    cancel.addEventListener("click", ()=> {
+        clearInterval(heart2)
+        paper.clearRect(0, 0, canvas.width, canvas.height)
+    })
     },1000/115)
     
 })
 
 Pacman.addEventListener("click", ()=> {
-    
-    setInterval(function(){   
+    happy.style.display = "none"
+    cry.style.display = "none"
+    Heart.style.display = "none"
+    Pacman.style.display = "none"
+    badApple.style.display = "none"
+    cancel.style.display = "block"
+    let Pacman2 =setInterval(function(){   
     pacman(open+=dir)
     ghost1()
     ghost2()
@@ -416,8 +435,61 @@ Pacman.addEventListener("click", ()=> {
     dir=-dir
     x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
     y = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
+    cancel.addEventListener("click", ()=> {
+        clearInterval(Pacman2)
+        paper.clearRect(0, 0, canvas.width, canvas.height)
+    })
     },1000/115)
 })
+
+badApple.addEventListener("click", ()=> {
+    happy.style.display = "none"
+    cry.style.display = "none"
+    Pacman.style.display = "none"
+    Heart.style.display = "none"
+    badApple.style.display = "none"
+    cancel.style.display = "block"
+    video.play()
+    video.addEventListener("play", ()=> {
+        update()
+    })
+    video.addEventListener("pause", ()=> {
+        navigator.mediaSession.metadata.artwork = [
+            { src: "https://i.imgur.com/3q3r3Yr.png", type: "image/png" }
+        ]
+    })
+    cancel.addEventListener("click", ()=> {
+        video.pause()
+        video.currentTime = 0
+        paper.clearRect(0, 0, canvas.width, canvas.height)
+    })
+})
+
+cancel.addEventListener("click", ()=> {
+    happy.style.display = "block"
+    cry.style.display = "block"
+    Pacman.style.display = "block"
+    Heart.style.display = "block"
+    badApple.style.display = "block"
+    cancel.style.display = "none"
+})
+
+if ('mediaSession' in navigator) {
+	navigator.mediaSession.metadata = new MediaMetadata({
+		title: 'Bad Apple!!',
+		album: 'Lovelight',
+		artist: 'nomico'
+	})
+}
+
+function update() {
+	if (video.paused || video.ended) return
+	paper.drawImage(video, 0, 0, canvas.width, canvas.height)
+	navigator.mediaSession.metadata.artwork = [
+		{ src: canvas.toDataURL(), type: "image/png" }
+	]
+	setTimeout(() => update(), 0)
+}
 
 paper.font = "20px Arial";
 
