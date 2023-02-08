@@ -1,8 +1,15 @@
 let canvas = document.getElementById('myCanvas')
 let item = document.querySelector("#moveItem")
 let itemRect = item.getBoundingClientRect()
+let happy = document.querySelector("#happy")
+let cry = document.querySelector("#sad")
+let Heart = document.querySelector("#heart")
+let Pacman = document.querySelector("#pacman")
+
 
 document.addEventListener("mousemove", followMouse, 1000/120);
+
+
 
 let xPos = 0, yPos = 0
 let curX = 0, curY = 0
@@ -52,9 +59,9 @@ setInterval(() => {
     let delta = (Date.now() - currentTime) / 1000
     let fps = 1 / delta
     currentTime = Date.now();
-    paper.clearRect(0, 0, canvas.width, canvas.height)
-    paper.beginPath();
-    paper.stroke();
+    // paper.clearRect(0, 0, canvas.width, canvas.height)
+    // paper.beginPath();
+    // paper.stroke();
     if (x > 400) {
         velocityX *= -1
     }
@@ -279,6 +286,8 @@ function sad (){
 
 function smile()
 {
+    paper.clearRect(0, 0, canvas.width, canvas.height)
+
     paper.beginPath();
     paper.arc(x, y, 50, 0, 2 * Math.PI, true);
     paper.fillStyle = "yellow";
@@ -317,6 +326,8 @@ function smile()
 
 function heart()
 {
+    paper.clearRect(0, 0, canvas.width, canvas.height)
+
     paper.beginPath();
     paper.moveTo(x, y);
     paper.fillStyle = "red";
@@ -329,20 +340,20 @@ function heart()
     paper.fill();
 }
 
-setInterval(function(){
-    // pacman(open+=dir)
-    // ghost1()
-    // ghost2()
-    // ghost3()
-    // dots()
-    //sad()
-    heart()
-    //smile()
-    if(open%100==0)
-    dir=-dir
-    x = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
-    y = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
-}, 1000/120)
+// setInterval(function(){
+//     pacman(open+=dir)
+//     ghost1()
+//     ghost2()
+//     ghost3()
+//     dots()
+//     //sad()
+//     //heart()
+//     //smile()
+//     if(open%100==0)
+//     dir=-dir
+//     x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+//     y = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
+// }, 1000/120)
 
 function roundedRect(paper, x, y, width, height, radius) {
     paper.beginPath();
@@ -365,6 +376,47 @@ canvas.addEventListener("click", (event) => {
     console.log(positionPX);
     console.log(positionPY);
 
+})
+
+happy.addEventListener("click", ()=> {
+    setInterval(function(){
+    smile()
+    x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    y = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    },1000/120)
+    
+})
+
+cry.addEventListener("click", ()=> {
+    setInterval(function(){
+    sad()
+    x = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
+    y = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    },1000/120)
+})
+
+Heart.addEventListener("click", ()=> {
+    setInterval(function(){
+    heart()
+    x = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
+    y = 200 + (30)*-Math.tan((omega*currentTime+0)/1000);
+    },1000/115)
+    
+})
+
+Pacman.addEventListener("click", ()=> {
+    
+    setInterval(function(){   
+    pacman(open+=dir)
+    ghost1()
+    ghost2()
+    ghost3()
+    dots()
+    if(open%100==0)
+    dir=-dir
+    x = 200 + (30)*Math.tan((omega*currentTime+0)/1000);
+    y = 200 + (30)*Math.cos((omega*currentTime+0)/1000);
+    },1000/115)
 })
 
 paper.font = "20px Arial";
